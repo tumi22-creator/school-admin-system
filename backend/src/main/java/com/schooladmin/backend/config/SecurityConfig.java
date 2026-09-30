@@ -31,10 +31,10 @@ public class SecurityConfig {
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
 
-   configuration.setAllowedOrigins(
+configuration.setAllowedOriginPatterns(
         List.of(
                 "http://localhost:5173",
-                "https://school-admin-system-ibpaohaxu-tumelo-s-projects22.vercel.app"
+                "https://*.vercel.app"
         )
 );
 
