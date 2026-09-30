@@ -32,8 +32,11 @@ public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
 
     configuration.setAllowedOrigins(
-            List.of("http://localhost:5173")
-    );
+        List.of(
+                "http://localhost:5173",
+                "https://school-admin-system-ofsb23n7k-tumelo-s-projects22.vercel.app"
+        )
+);
 
     configuration.setAllowedMethods(
             List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
