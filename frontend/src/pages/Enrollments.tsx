@@ -1,3 +1,4 @@
+
 import { useEffect, useState, type FormEvent } from "react";
 import api from "../api/api";
 
@@ -94,103 +95,141 @@ export default function Enrollments() {
   };
 
   return (
-    <div>
-      <h1>Student Enrollments</h1>
-
-      <button onClick={() => (window.location.href = "/dashboard")}>
-        Back to Dashboard
-      </button>
-
-      <hr />
-
-      <h2>Enroll Student in Subject</h2>
-
-      <form onSubmit={addEnrollment}>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
         <div>
-          <label>Student</label>
-          <br />
-
-          <select
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            required
-          >
-            <option value="">Select a student</option>
-
-            {students.map((student) => (
-              <option key={student.id} value={student.id}>
-                {student.firstName} {student.lastName} (
-                {student.studentNumber})
-              </option>
-            ))}
-          </select>
+          <h1>School Administration System</h1>
+          <p>Student enrollment management</p>
         </div>
 
-        <br />
-
-        <div>
-          <label>Subject</label>
-          <br />
-
-          <select
-            value={subjectId}
-            onChange={(e) => setSubjectId(e.target.value)}
-            required
-          >
-            <option value="">Select a subject</option>
-
-            {subjects.map((subject) => (
-              <option key={subject.id} value={subject.id}>
-                {subject.name} ({subject.code})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <br />
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Enrolling..." : "Enroll Student"}
+        <button
+          className="logout-button"
+          onClick={() => {
+            window.location.href = "/dashboard";
+          }}
+        >
+          Back to Dashboard
         </button>
-      </form>
+      </header>
 
-      {message && <p>{message}</p>}
+      <main className="dashboard-main">
+        <section className="welcome-section">
+          <h2>Student Enrollments</h2>
+          <p>
+            Enroll students in the subjects they are taking.
+          </p>
+        </section>
 
-      <hr />
+        <section className="module-card student-form-card">
+          <div>
+            <h2>Enroll Student in Subject</h2>
+            <p className="form-description">
+              Select a student and subject to create an enrollment.
+            </p>
+          </div>
 
-      <h2>Current Enrollments</h2>
+          <form onSubmit={addEnrollment} className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label>Student</label>
 
-      {enrollments.length === 0 ? (
-        <p>No enrollments found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Student Number</th>
-              <th>Subject</th>
-              <th>Code</th>
-            </tr>
-          </thead>
+                <select
+                  value={studentId}
+                  onChange={(e) => setStudentId(e.target.value)}
+                  required
+                >
+                  <option value="">Select a student</option>
 
-          <tbody>
-            {enrollments.map((enrollment) => (
-              <tr key={enrollment.id}>
-                <td>
-                  {enrollment.student.firstName}{" "}
-                  {enrollment.student.lastName}
-                </td>
+                  {students.map((student) => (
+                    <option key={student.id} value={student.id}>
+                      {student.firstName} {student.lastName} (
+                      {student.studentNumber})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                <td>{enrollment.student.studentNumber}</td>
+              <div className="form-field">
+                <label>Subject</label>
 
-                <td>{enrollment.subject.name}</td>
+                <select
+                  value={subjectId}
+                  onChange={(e) => setSubjectId(e.target.value)}
+                  required
+                >
+                  <option value="">Select a subject</option>
 
-                <td>{enrollment.subject.code}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                  {subjects.map((subject) => (
+                    <option key={subject.id} value={subject.id}>
+                      {subject.name} ({subject.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <button
+              className="module-button form-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Enrolling..." : "Enroll Student"}
+            </button>
+          </form>
+
+          {message && (
+            <div className="status-message">
+              {message}
+            </div>
+          )}
+        </section>
+
+        <section className="module-card">
+          <div className="section-heading">
+            <h2>Current Enrollments</h2>
+            <p>
+              {enrollments.length} enrollment
+              {enrollments.length === 1 ? "" : "s"} registered.
+            </p>
+          </div>
+
+          {enrollments.length === 0 ? (
+            <p>No enrollments found.</p>
+          ) : (
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Student Number</th>
+                    <th>Subject</th>
+                    <th>Code</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {enrollments.map((enrollment) => (
+                    <tr key={enrollment.id}>
+                      <td>
+                        <strong>
+                          {enrollment.student.firstName}{" "}
+                          {enrollment.student.lastName}
+                        </strong>
+                      </td>
+
+                      <td>{enrollment.student.studentNumber}</td>
+
+                      <td>{enrollment.subject.name}</td>
+
+                      <td>{enrollment.subject.code}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
