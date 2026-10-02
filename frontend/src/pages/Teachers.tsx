@@ -67,109 +67,143 @@ export default function Teachers() {
   };
 
   return (
-    <div>
-      <h1>Teachers</h1>
-
-      <button onClick={() => (window.location.href = "/dashboard")}>
-        Back to Dashboard
-      </button>
-
-      <hr />
-
-      <h2>Add Teacher</h2>
-
-      <form onSubmit={addTeacher}>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
         <div>
-          <label>First Name</label>
-          <br />
-
-          <input
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
+          <h1>School Administration System</h1>
+          <p>Teacher management</p>
         </div>
 
-        <br />
-
-        <div>
-          <label>Last Name</label>
-          <br />
-
-          <input
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-        </div>
-
-        <br />
-
-        <div>
-          <label>Employee Number</label>
-          <br />
-
-          <input
-            value={employeeNumber}
-            onChange={(e) => setEmployeeNumber(e.target.value)}
-            placeholder="e.g. EMP001"
-            required
-          />
-        </div>
-
-        <br />
-
-        <div>
-          <label>Email</label>
-          <br />
-
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <br />
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Adding..." : "Add Teacher"}
+        <button
+          className="logout-button"
+          onClick={() => {
+            window.location.href = "/dashboard";
+          }}
+        >
+          Back to Dashboard
         </button>
-      </form>
+      </header>
 
-      {message && <p>{message}</p>}
+      <main className="dashboard-main">
+        <section className="welcome-section">
+          <h2>Teachers</h2>
+          <p>
+            Manage teacher records and staff information.
+          </p>
+        </section>
 
-      <hr />
+        <section className="module-card student-form-card">
+          <div>
+            <h2>Add Teacher</h2>
+            <p className="form-description">
+              Enter the teacher's employment and contact details.
+            </p>
+          </div>
 
-      <h2>Teacher List</h2>
+          <form onSubmit={addTeacher} className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label>First Name</label>
+                <input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="e.g. Sarah"
+                  required
+                />
+              </div>
 
-      {teachers.length === 0 ? (
-        <p>No teachers found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Employee Number</th>
-              <th>Email</th>
-            </tr>
-          </thead>
+              <div className="form-field">
+                <label>Last Name</label>
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="e.g. Smith"
+                  required
+                />
+              </div>
 
-          <tbody>
-            {teachers.map((teacher) => (
-              <tr key={teacher.id}>
-                <td>
-                  {teacher.firstName} {teacher.lastName}
-                </td>
+              <div className="form-field">
+                <label>Employee Number</label>
+                <input
+                  value={employeeNumber}
+                  onChange={(e) =>
+                    setEmployeeNumber(e.target.value)
+                  }
+                  placeholder="e.g. EMP001"
+                  required
+                />
+              </div>
 
-                <td>{teacher.employeeNumber}</td>
+              <div className="form-field">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="teacher@school.com"
+                />
+              </div>
+            </div>
 
-                <td>{teacher.email || "-"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            <button
+              className="module-button form-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Adding Teacher..." : "Add Teacher"}
+            </button>
+          </form>
+
+          {message && (
+            <div className="status-message">
+              {message}
+            </div>
+          )}
+        </section>
+
+        <section className="module-card">
+          <div className="section-heading">
+            <h2>Teacher List</h2>
+            <p>
+              {teachers.length} teacher
+              {teachers.length === 1 ? "" : "s"} registered.
+            </p>
+          </div>
+
+          {teachers.length === 0 ? (
+            <p>No teachers found.</p>
+          ) : (
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Employee Number</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {teachers.map((teacher) => (
+                    <tr key={teacher.id}>
+                      <td>
+                        <strong>
+                          {teacher.firstName}{" "}
+                          {teacher.lastName}
+                        </strong>
+                      </td>
+
+                      <td>{teacher.employeeNumber}</td>
+
+                      <td>{teacher.email || "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
