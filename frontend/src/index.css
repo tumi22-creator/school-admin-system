@@ -216,3 +216,151 @@ button {
     padding: 28px 16px;
   }
 }
+
+.student-form-card {
+  margin-bottom: 24px;
+}
+
+.form-description {
+  color: #68737d;
+  margin: 6px 0 24px;
+}
+
+.student-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-field input,
+.form-field select,
+.assignment-controls select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d5dbe0;
+  border-radius: 6px;
+  background: white;
+  outline: none;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.assignment-controls select:focus {
+  border-color: #2563eb;
+}
+
+.form-submit {
+  width: fit-content;
+  min-width: 150px;
+}
+
+.status-message {
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: #f0f4f8;
+  border-radius: 6px;
+  color: #334155;
+  font-size: 14px;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 18px;
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 14px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.data-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.data-table td {
+  font-size: 14px;
+}
+
+.assignment-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 300px;
+}
+
+.assignment-controls select {
+  min-width: 160px;
+}
+
+.table-button {
+  border: none;
+  border-radius: 5px;
+  padding: 8px 11px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.table-button.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.table-button.primary:hover {
+  background: #1d4ed8;
+}
+
+.table-button.secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.table-button.secondary:hover {
+  background: #d1d5db;
+}
+
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-submit {
+    width: 100%;
+  }
+
+  .assignment-controls {
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 150px;
+  }
+}
+

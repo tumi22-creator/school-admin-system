@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import api from "../api/api";
@@ -32,8 +31,10 @@ export default function Students() {
   const [studentNumber, setStudentNumber] = useState("");
   const [email, setEmail] = useState("");
   const [classId, setClassId] = useState("");
-  const [assigningStudentId, setAssigningStudentId] = useState<number | null>(null);
-const [assignClassId, setAssignClassId] = useState("");
+
+  const [assigningStudentId, setAssigningStudentId] =
+    useState<number | null>(null);
+  const [assignClassId, setAssignClassId] = useState("");
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -94,195 +95,267 @@ const [assignClassId, setAssignClassId] = useState("");
     }
   };
 
-const assignStudentToClass = async (studentId: number) => {
-  if (!assignClassId) {
-    setMessage("Select a class first.");
-    return;
-  }
+  const assignStudentToClass = async (studentId: number) => {
+    if (!assignClassId) {
+      setMessage("Select a class first.");
+      return;
+    }
 
-  try {
-    await api.put(
-      `/students/${studentId}/class/${assignClassId}`
-    );
+    try {
+      await api.put(
+        `/students/${studentId}/class/${assignClassId}`
+      );
 
-    setMessage("Student class updated successfully.");
+      setMessage("Student class updated successfully.");
 
-    setAssigningStudentId(null);
-    setAssignClassId("");
+      setAssigningStudentId(null);
+      setAssignClassId("");
 
-    await loadStudents();
-  } catch (error: any) {
-    console.error("Failed to assign student to class:", error);
+      await loadStudents();
+    } catch (error: any) {
+      console.error(
+        "Failed to assign student to class:",
+        error
+      );
 
-    setMessage(
-      error.response?.data || "Failed to update student class."
-    );
-  }
-};
+      setMessage(
+        error.response?.data ||
+          "Failed to update student class."
+      );
+    }
+  };
 
   return (
-    <div>
-      <h1>Students</h1>
-
-      <button onClick={() => (window.location.href = "/dashboard")}>
-        Back to Dashboard
-      </button>
-
-      <hr />
-
-      <h2>Add Student</h2>
-
-      <form onSubmit={addStudent}>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
         <div>
-          <label>First Name</label>
-          <input
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
+          <h1>School Administration System</h1>
+          <p>Student management</p>
         </div>
 
-        <div>
-          <label>Last Name</label>
-          <input
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Student Number</label>
-          <input
-            value={studentNumber}
-            onChange={(e) => setStudentNumber(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label>Class</label>
-
-          <select
-            value={classId}
-            onChange={(e) => setClassId(e.target.value)}
-          >
-            <option value="">Select a class</option>
-
-            {classes.map((schoolClass) => (
-              <option key={schoolClass.id} value={schoolClass.id}>
-                {schoolClass.name} - {schoolClass.grade.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Adding..." : "Add Student"}
+        <button
+          className="logout-button"
+          onClick={() => {
+            window.location.href = "/dashboard";
+          }}
+        >
+          Back to Dashboard
         </button>
-      </form>
+      </header>
 
-      {message && <p>{message}</p>}
+      <main className="dashboard-main">
+        <section className="welcome-section">
+          <h2>Students</h2>
+          <p>
+            Register students and manage their class assignments.
+          </p>
+        </section>
 
-      <hr />
+        <section className="module-card student-form-card">
+          <div>
+            <h2>Add Student</h2>
+            <p className="form-description">
+              Enter the student's details and assign them to a class.
+            </p>
+          </div>
 
-      <h2>Student List</h2>
+          <form onSubmit={addStudent} className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label>First Name</label>
+                <input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="e.g. John"
+                  required
+                />
+              </div>
 
-      {students.length === 0 ? (
-        <p>No students found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Student Number</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Class</th>
-<th>Action</th>
-            </tr>
-          </thead>
+              <div className="form-field">
+                <label>Last Name</label>
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="e.g. Doe"
+                  required
+                />
+              </div>
 
-          <tbody>
-            {students.map((student) => (
-              <tr key={student.id}>
-                <td>{student.studentNumber}</td>
+              <div className="form-field">
+                <label>Student Number</label>
+                <input
+                  value={studentNumber}
+                  onChange={(e) =>
+                    setStudentNumber(e.target.value)
+                  }
+                  placeholder="e.g. STU006"
+                  required
+                />
+              </div>
 
-                <td>
-                  {student.firstName} {student.lastName}
-                </td>
+              <div className="form-field">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="student@example.com"
+                />
+              </div>
 
-                <td>{student.email || "-"}</td>
+              <div className="form-field">
+                <label>Class</label>
 
-                <td>
-                 {student.schoolClass
-  ? `${student.schoolClass.name} - ${student.schoolClass.grade.name}`
-  : "Not assigned"}
-                </td>
+                <select
+                  value={classId}
+                  onChange={(e) => setClassId(e.target.value)}
+                >
+                  <option value="">Select a class</option>
 
-                <td>
-  {assigningStudentId === student.id ? (
-    <div>
-      <select
-        value={assignClassId}
-        onChange={(e) => setAssignClassId(e.target.value)}
-      >
-        <option value="">Select class</option>
+                  {classes.map((schoolClass) => (
+                    <option
+                      key={schoolClass.id}
+                      value={schoolClass.id}
+                    >
+                      {schoolClass.name} -{" "}
+                      {schoolClass.grade.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-        {classes.map((schoolClass) => (
-          <option
-            key={schoolClass.id}
-            value={schoolClass.id}
-          >
-            {schoolClass.name} - {schoolClass.grade.name}
-          </option>
-        ))}
-      </select>
+            <button
+              className="module-button form-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Adding Student..." : "Add Student"}
+            </button>
+          </form>
 
-      <button
-        onClick={() => assignStudentToClass(student.id)}
-      >
-        Save
-      </button>
+          {message && (
+            <div className="status-message">
+              {message}
+            </div>
+          )}
+        </section>
 
-      <button
-        onClick={() => {
-          setAssigningStudentId(null);
-          setAssignClassId("");
-        }}
-      >
-        Cancel
-      </button>
-    </div>
-  ) : (
-    <button
-      onClick={() => {
-        setAssigningStudentId(student.id);
-        setAssignClassId(
-          student.schoolClass
-            ? String(student.schoolClass.id)
-            : ""
-        );
-      }}
-    >
-      {student.schoolClass ? "Change Class" : "Assign Class"}
-    </button>
-  )}
-</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+        <section className="module-card">
+          <div className="section-heading">
+            <h2>Student List</h2>
+            <p>
+              {students.length} student
+              {students.length === 1 ? "" : "s"} registered.
+            </p>
+          </div>
+
+          {students.length === 0 ? (
+            <p>No students found.</p>
+          ) : (
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Student Number</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Class</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {students.map((student) => (
+                    <tr key={student.id}>
+                      <td>{student.studentNumber}</td>
+
+                      <td>
+                        <strong>
+                          {student.firstName}{" "}
+                          {student.lastName}
+                        </strong>
+                      </td>
+
+                      <td>{student.email || "-"}</td>
+
+                      <td>
+                        {student.schoolClass
+                          ? `${student.schoolClass.name} - ${student.schoolClass.grade.name}`
+                          : "Not assigned"}
+                      </td>
+
+                      <td>
+                        {assigningStudentId === student.id ? (
+                          <div className="assignment-controls">
+                            <select
+                              value={assignClassId}
+                              onChange={(e) =>
+                                setAssignClassId(e.target.value)
+                              }
+                            >
+                              <option value="">
+                                Select class
+                              </option>
+
+                              {classes.map((schoolClass) => (
+                                <option
+                                  key={schoolClass.id}
+                                  value={schoolClass.id}
+                                >
+                                  {schoolClass.name} -{" "}
+                                  {schoolClass.grade.name}
+                                </option>
+                              ))}
+                            </select>
+
+                            <button
+                              className="table-button primary"
+                              onClick={() =>
+                                assignStudentToClass(student.id)
+                              }
+                            >
+                              Save
+                            </button>
+
+                            <button
+                              className="table-button secondary"
+                              onClick={() => {
+                                setAssigningStudentId(null);
+                                setAssignClassId("");
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            className="table-button primary"
+                            onClick={() => {
+                              setAssigningStudentId(student.id);
+                              setAssignClassId(
+                                student.schoolClass
+                                  ? String(
+                                      student.schoolClass.id
+                                    )
+                                  : ""
+                              );
+                            }}
+                          >
+                            {student.schoolClass
+                              ? "Change Class"
+                              : "Assign Class"}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
-
