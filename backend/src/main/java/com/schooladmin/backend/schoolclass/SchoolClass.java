@@ -1,6 +1,7 @@
 package com.schooladmin.backend.schoolclass;
 
 import jakarta.persistence.*;
+import com.schooladmin.backend.grade.Grade;
 
 @Entity
 @Table(name = "school_classes")
@@ -13,12 +14,14 @@ public class SchoolClass {
     @Column(nullable = false, unique = true)
     private String name;
 
-    private String grade;
+    @ManyToOne
+    @JoinColumn(name = "grade_id", nullable = false)
+    private Grade grade;
 
     public SchoolClass() {
     }
 
-    public SchoolClass(String name, String grade) {
+    public SchoolClass(String name, Grade grade) {
         this.name = name;
         this.grade = grade;
     }
@@ -35,11 +38,11 @@ public class SchoolClass {
         this.name = name;
     }
 
-    public String getGrade() {
+    public Grade getGrade() {
         return grade;
     }
 
-    public void setGrade(String grade) {
+    public void setGrade(Grade grade) {
         this.grade = grade;
     }
 }

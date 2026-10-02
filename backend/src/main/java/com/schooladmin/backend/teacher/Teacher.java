@@ -1,15 +1,12 @@
 package com.schooladmin.backend.teacher;
 
 import jakarta.persistence.*;
-import com.schooladmin.backend.schoolclass.SchoolClass;
 
 @Entity
 @Table(name = "teachers")
 public class Teacher {
 
-    @ManyToOne
-    @JoinColumn(name = "class_id")
-    private SchoolClass schoolClass;
+    
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,11 +70,7 @@ public class Teacher {
         this.email = email;
     }
 
-    public SchoolClass getSchoolClass() {
-    return schoolClass;
-}
+    
 
-public void setSchoolClass(SchoolClass schoolClass) {
-    this.schoolClass = schoolClass;
-}
+
 }

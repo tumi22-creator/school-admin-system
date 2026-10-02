@@ -1,5 +1,8 @@
 package com.schooladmin.backend.schoolclass;
 
+import com.schooladmin.backend.grade.Grade;
+import com.schooladmin.backend.grade.GradeRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,9 +12,14 @@ import java.util.List;
 public class SchoolClassController {
 
     private final SchoolClassRepository schoolClassRepository;
-
-    public SchoolClassController(SchoolClassRepository schoolClassRepository) {
+    private final GradeRepository gradeRepository;
+    
+    public SchoolClassController(
+            SchoolClassRepository schoolClassRepository,
+            GradeRepository gradeRepository
+    ) {
         this.schoolClassRepository = schoolClassRepository;
+        this.gradeRepository = gradeRepository;
     }
 
     @GetMapping
@@ -20,7 +28,23 @@ public class SchoolClassController {
     }
 
     @PostMapping
-    public SchoolClass createClass(@RequestBody SchoolClass schoolClass) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public SchoolClass createClass(@RequestBody CreateClassRequest request) {
+
+        Grade grade = gradeRepository.findById(request.gradeId())
+                .orElseThrow(() -> new RuntimeException("Grade not found"));
+
+        SchoolClass schoolClass = new SchoolClass(
+                request.name(),
+                grade
+        );
+
         return schoolClassRepository.save(schoolClass);
+    }
+
+    public record CreateClassRequest(
+            String name,
+            Long gradeId
+    ) {
     }
 }

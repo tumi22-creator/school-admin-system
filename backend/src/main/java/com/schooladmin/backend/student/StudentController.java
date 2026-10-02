@@ -36,26 +36,28 @@ public class StudentController {
         return studentRepository.findAll();
     }
 
-    @PostMapping
+  @PostMapping
 public ResponseEntity<?> createStudent(
-        @RequestBody Student student,
+        @RequestBody CreateStudentRequest request,
         Authentication authentication
 ) {
-    if (student.getSchoolClass() != null
-            && student.getSchoolClass().getId() != null) {
 
-        SchoolClass schoolClass =
-                schoolClassRepository.findById(
-                        student.getSchoolClass().getId()
-                ).orElse(null);
+    SchoolClass schoolClass =
+            schoolClassRepository.findById(request.classId())
+                    .orElse(null);
 
-        if (schoolClass == null) {
-            return ResponseEntity.badRequest()
-                    .body("Class not found");
-        }
-
-        student.setSchoolClass(schoolClass);
+    if (schoolClass == null) {
+        return ResponseEntity.badRequest()
+                .body("Class not found");
     }
+
+    Student student = new Student();
+
+    student.setFirstName(request.firstName());
+    student.setLastName(request.lastName());
+    student.setStudentNumber(request.studentNumber());
+    student.setEmail(request.email());
+    student.setSchoolClass(schoolClass);
 
     Student savedStudent = studentRepository.save(student);
 
@@ -67,6 +69,58 @@ public ResponseEntity<?> createStudent(
                     + " "
                     + savedStudent.getLastName()
                     + " (" + savedStudent.getStudentNumber() + ")"
+                    + " in class "
+                    + schoolClass.getName()
+    );
+
+    return ResponseEntity.ok(savedStudent);
+}
+
+    public record CreateStudentRequest(
+            String firstName,
+            String lastName,
+            String studentNumber,
+            String email,
+            Long classId
+    ) {
+    }
+
+@PutMapping("/{studentId}/class/{classId}")
+public ResponseEntity<?> assignStudentToClass(
+        @PathVariable Long studentId,
+        @PathVariable Long classId,
+        Authentication authentication
+) {
+
+    Student student = studentRepository.findById(studentId)
+            .orElse(null);
+
+    if (student == null) {
+        return ResponseEntity.notFound().build();
+    }
+
+    SchoolClass schoolClass =
+            schoolClassRepository.findById(classId)
+                    .orElse(null);
+
+    if (schoolClass == null) {
+        return ResponseEntity.badRequest()
+                .body("Class not found");
+    }
+
+    student.setSchoolClass(schoolClass);
+
+    Student savedStudent = studentRepository.save(student);
+
+    auditLogService.log(
+            "ASSIGN_STUDENT_CLASS",
+            authentication.getName(),
+            "Assigned student "
+                    + savedStudent.getFirstName()
+                    + " "
+                    + savedStudent.getLastName()
+                    + " to class "
+                    + schoolClass.getName()
     );
 
     return ResponseEntity.ok(savedStudent);

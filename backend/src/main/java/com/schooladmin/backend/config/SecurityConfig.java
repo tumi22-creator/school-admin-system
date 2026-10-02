@@ -77,13 +77,24 @@ configuration.setAllowedOriginPatterns(
 
                         // Public authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
 
                       
                         .requestMatchers("/api/students/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers("/api/teachers/**").hasRole("ADMIN")
                         .requestMatchers("/api/classes/**").hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers("/api/grades/**").hasAnyRole("ADMIN", "TEACHER")
 
                         .requestMatchers("/api/subjects/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/teaching-assignments/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/enrollments/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/parent-students/**")
                         .hasRole("ADMIN")
 
                         .requestMatchers("/api/attendance/**")
@@ -92,7 +103,10 @@ configuration.setAllowedOriginPatterns(
                         .requestMatchers("/api/marks/**")
                         .hasAnyRole("ADMIN", "TEACHER")
 
-                        .requestMatchers(HttpMethod.POST, "/api/parents")
+                       .requestMatchers(HttpMethod.POST, "/api/parents")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/parents/*/email")
                         .hasRole("ADMIN")
 
                         .requestMatchers("/api/parents/**")
