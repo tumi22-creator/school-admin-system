@@ -11,6 +11,11 @@ import Parents from "./pages/Parents";
 import Fees from "./pages/Fees";
 import ParentMarks from "./pages/ParentMarks";
 import ParentFees from "./pages/ParentFees";
+import Subjects from "./pages/Subjects";
+import TeachingAssignments from "./pages/TeachingAssignments";
+import Enrollments from "./pages/Enrollments";
+import Grades from "./pages/Grades";
+
 
 
 function App() {
@@ -41,9 +46,22 @@ if (role === "PARENT" && path === "/parents") {
     return <Teachers />;
   }
 
+  if (path === "/grades") return <Grades />;
+
   if (path === "/classes") {
     return <Classes />;
   } 
+
+  if (path === "/subjects") {
+  return <Subjects />;
+}
+if (path === "/enrollments") {
+  return <Enrollments />;
+}
+
+if (path === "/teaching-assignments") {
+  return <TeachingAssignments />;
+}
 
   if (path === "/attendance") {
     return <Attendance />;

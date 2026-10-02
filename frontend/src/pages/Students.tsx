@@ -3,10 +3,15 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import api from "../api/api";
 
+type Grade = {
+  id: number;
+  name: string;
+};
+
 type SchoolClass = {
   id: number;
   name: string;
-  grade: string;
+  grade: Grade;
 };
 
 type Student = {
@@ -27,6 +32,8 @@ export default function Students() {
   const [studentNumber, setStudentNumber] = useState("");
   const [email, setEmail] = useState("");
   const [classId, setClassId] = useState("");
+  const [assigningStudentId, setAssigningStudentId] = useState<number | null>(null);
+const [assignClassId, setAssignClassId] = useState("");
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -86,6 +93,32 @@ export default function Students() {
       setLoading(false);
     }
   };
+
+const assignStudentToClass = async (studentId: number) => {
+  if (!assignClassId) {
+    setMessage("Select a class first.");
+    return;
+  }
+
+  try {
+    await api.put(
+      `/students/${studentId}/class/${assignClassId}`
+    );
+
+    setMessage("Student class updated successfully.");
+
+    setAssigningStudentId(null);
+    setAssignClassId("");
+
+    await loadStudents();
+  } catch (error: any) {
+    console.error("Failed to assign student to class:", error);
+
+    setMessage(
+      error.response?.data || "Failed to update student class."
+    );
+  }
+};
 
   return (
     <div>
@@ -147,7 +180,7 @@ export default function Students() {
 
             {classes.map((schoolClass) => (
               <option key={schoolClass.id} value={schoolClass.id}>
-                {schoolClass.name} - {schoolClass.grade}
+                {schoolClass.name} - {schoolClass.grade.name}
               </option>
             ))}
           </select>
@@ -174,6 +207,7 @@ export default function Students() {
               <th>Name</th>
               <th>Email</th>
               <th>Class</th>
+<th>Action</th>
             </tr>
           </thead>
 
@@ -189,10 +223,60 @@ export default function Students() {
                 <td>{student.email || "-"}</td>
 
                 <td>
-                  {student.schoolClass
-                    ? `${student.schoolClass.name} - ${student.schoolClass.grade}`
-                    : "-"}
+                 {student.schoolClass
+  ? `${student.schoolClass.name} - ${student.schoolClass.grade.name}`
+  : "Not assigned"}
                 </td>
+
+                <td>
+  {assigningStudentId === student.id ? (
+    <div>
+      <select
+        value={assignClassId}
+        onChange={(e) => setAssignClassId(e.target.value)}
+      >
+        <option value="">Select class</option>
+
+        {classes.map((schoolClass) => (
+          <option
+            key={schoolClass.id}
+            value={schoolClass.id}
+          >
+            {schoolClass.name} - {schoolClass.grade.name}
+          </option>
+        ))}
+      </select>
+
+      <button
+        onClick={() => assignStudentToClass(student.id)}
+      >
+        Save
+      </button>
+
+      <button
+        onClick={() => {
+          setAssigningStudentId(null);
+          setAssignClassId("");
+        }}
+      >
+        Cancel
+      </button>
+    </div>
+  ) : (
+    <button
+      onClick={() => {
+        setAssigningStudentId(student.id);
+        setAssignClassId(
+          student.schoolClass
+            ? String(student.schoolClass.id)
+            : ""
+        );
+      }}
+    >
+      {student.schoolClass ? "Change Class" : "Assign Class"}
+    </button>
+  )}
+</td>
               </tr>
             ))}
           </tbody>

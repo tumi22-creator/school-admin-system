@@ -66,6 +66,17 @@ export default function Dashboard() {
            Manage Teachers
         </button>
 
+        <div>
+  <h3>Grades</h3>
+  <p>Manage Grade 8 to Grade 12.</p>
+</div>
+
+<button
+  onClick={() => (window.location.href = "/grades")}
+>
+  Manage Grades
+</button>
+
         
         <div>
         <h3>Classes</h3>
@@ -75,6 +86,37 @@ export default function Dashboard() {
           <button onClick={() => (window.location.href = "/classes")}>
             Manage Classes
           </button>
+
+          <div>
+  <h3>Subjects</h3>
+  <p>Manage school subjects.</p>
+</div>
+
+<button onClick={() => (window.location.href = "/subjects")}>
+  Manage Subjects
+</button>
+
+<div>
+  <h3>Student Enrollments</h3>
+  <p>Enroll students in school subjects.</p>
+</div>
+
+<button
+  onClick={() => (window.location.href = "/enrollments")}
+>
+  Manage Enrollments
+</button>
+
+<div>
+  <h3>Teaching Assignments</h3>
+  <p>Assign teachers to subjects and classes.</p>
+</div>
+
+<button
+  onClick={() => (window.location.href = "/teaching-assignments")}
+>
+  Manage Teaching Assignments
+</button>
 
          <div>
           <h3>Marks</h3>

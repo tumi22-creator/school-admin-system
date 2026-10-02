@@ -1,17 +1,26 @@
+
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import api from "../api/api";
 
+type Grade = {
+  id: number;
+  name: string;
+};
+
 type SchoolClass = {
   id: number;
   name: string;
-  grade: string;
+  grade: Grade;
 };
 
 export default function Classes() {
   const [classes, setClasses] = useState<SchoolClass[]>([]);
+  const [grades, setGrades] = useState<Grade[]>([]);
+
   const [name, setName] = useState("");
-  const [grade, setGrade] = useState("");
+  const [gradeId, setGradeId] = useState("");
+
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -24,8 +33,18 @@ export default function Classes() {
     }
   };
 
+  const loadGrades = async () => {
+    try {
+      const response = await api.get("/grades");
+      setGrades(response.data);
+    } catch (error) {
+      console.error("Failed to load grades:", error);
+    }
+  };
+
   useEffect(() => {
     loadClasses();
+    loadGrades();
   }, []);
 
   const addClass = async (e: FormEvent) => {
@@ -37,12 +56,13 @@ export default function Classes() {
     try {
       await api.post("/classes", {
         name,
-        grade,
+        gradeId: Number(gradeId),
       });
 
       setMessage("Class added successfully.");
+
       setName("");
-      setGrade("");
+      setGradeId("");
 
       await loadClasses();
     } catch (error: any) {
@@ -69,6 +89,8 @@ export default function Classes() {
       <form onSubmit={addClass}>
         <div>
           <label>Class Name</label>
+          <br />
+
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -77,15 +99,28 @@ export default function Classes() {
           />
         </div>
 
+        <br />
+
         <div>
           <label>Grade</label>
-          <input
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-            placeholder="Grade 10"
+          <br />
+
+          <select
+            value={gradeId}
+            onChange={(e) => setGradeId(e.target.value)}
             required
-          />
+          >
+            <option value="">Select a grade</option>
+
+            {grades.map((grade) => (
+              <option key={grade.id} value={grade.id}>
+                {grade.name}
+              </option>
+            ))}
+          </select>
         </div>
+
+        <br />
 
         <button type="submit" disabled={loading}>
           {loading ? "Adding..." : "Add Class"}
@@ -113,7 +148,8 @@ export default function Classes() {
             {classes.map((schoolClass) => (
               <tr key={schoolClass.id}>
                 <td>{schoolClass.name}</td>
-                <td>{schoolClass.grade}</td>
+
+                <td>{schoolClass.grade.name}</td>
               </tr>
             ))}
           </tbody>
@@ -122,3 +158,4 @@ export default function Classes() {
     </div>
   );
 }
+

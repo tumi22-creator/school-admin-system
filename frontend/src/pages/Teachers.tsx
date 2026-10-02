@@ -1,30 +1,21 @@
 import { useEffect, useState, type FormEvent } from "react";
 import api from "../api/api";
 
-type SchoolClass = {
-  id: number;
-  name: string;
-  grade: string;
-};
-
 type Teacher = {
   id: number;
   firstName: string;
   lastName: string;
   employeeNumber: string;
   email: string;
-  schoolClass?: SchoolClass | null;
 };
 
 export default function Teachers() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [classes, setClasses] = useState<SchoolClass[]>([]);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [employeeNumber, setEmployeeNumber] = useState("");
   const [email, setEmail] = useState("");
-  const [classId, setClassId] = useState("");
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,18 +29,8 @@ export default function Teachers() {
     }
   };
 
-  const loadClasses = async () => {
-    try {
-      const response = await api.get("/classes");
-      setClasses(response.data);
-    } catch (error) {
-      console.error("Failed to load classes:", error);
-    }
-  };
-
   useEffect(() => {
     loadTeachers();
-    loadClasses();
   }, []);
 
   const addTeacher = async (e: FormEvent) => {
@@ -59,22 +40,12 @@ export default function Teachers() {
     setLoading(true);
 
     try {
-      const teacherData: any = {
+      await api.post("/teachers", {
         firstName,
         lastName,
         employeeNumber,
         email,
-      };
-
-      if (classId) {
-        teacherData.schoolClass = {
-          id: Number(classId),
-        };
-      } else {
-        teacherData.schoolClass = null;
-      }
-
-      await api.post("/teachers", teacherData);
+      });
 
       setMessage("Teacher added successfully.");
 
@@ -82,7 +53,6 @@ export default function Teachers() {
       setLastName("");
       setEmployeeNumber("");
       setEmail("");
-      setClassId("");
 
       await loadTeachers();
     } catch (error: any) {
@@ -112,6 +82,7 @@ export default function Teachers() {
         <div>
           <label>First Name</label>
           <br />
+
           <input
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
@@ -124,6 +95,7 @@ export default function Teachers() {
         <div>
           <label>Last Name</label>
           <br />
+
           <input
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
@@ -136,6 +108,7 @@ export default function Teachers() {
         <div>
           <label>Employee Number</label>
           <br />
+
           <input
             value={employeeNumber}
             onChange={(e) => setEmployeeNumber(e.target.value)}
@@ -149,31 +122,12 @@ export default function Teachers() {
         <div>
           <label>Email</label>
           <br />
+
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
-
-        <br />
-
-        <div>
-          <label>Class</label>
-          <br />
-
-          <select
-            value={classId}
-            onChange={(e) => setClassId(e.target.value)}
-          >
-            <option value="">No class assigned</option>
-
-            {classes.map((schoolClass) => (
-              <option key={schoolClass.id} value={schoolClass.id}>
-                {schoolClass.name} - {schoolClass.grade}
-              </option>
-            ))}
-          </select>
         </div>
 
         <br />
@@ -198,7 +152,6 @@ export default function Teachers() {
               <th>Name</th>
               <th>Employee Number</th>
               <th>Email</th>
-              <th>Class</th>
             </tr>
           </thead>
 
@@ -212,12 +165,6 @@ export default function Teachers() {
                 <td>{teacher.employeeNumber}</td>
 
                 <td>{teacher.email || "-"}</td>
-
-                <td>
-                  {teacher.schoolClass
-                    ? `${teacher.schoolClass.name} - ${teacher.schoolClass.grade}`
-                    : "Not assigned"}
-                </td>
               </tr>
             ))}
           </tbody>

@@ -27,8 +27,18 @@ function Parents() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    loadStudents();
-  }, []);
+  loadParents();
+  loadStudents();
+}, []);
+
+const loadParents = async () => {
+  try {
+    const response = await api.get("/parents");
+    setParents(response.data);
+  } catch (error) {
+    setMessage("Failed to load parents");
+  }
+};
 
   const loadStudents = async () => {
     try {
@@ -60,23 +70,27 @@ function Parents() {
   };
 
   const linkStudent = async () => {
-    if (!selectedParent || !selectedStudent) {
-      setMessage("Select both a parent and a student");
-      return;
-    }
+  if (!selectedParent || !selectedStudent) {
+    setMessage("Select both a parent and a student");
+    return;
+  }
 
-    try {
-      await api.put(
-        `/parents/${selectedParent}/student/${selectedStudent}`
-      );
+  try {
+    await api.post("/parent-students", {
+      parentId: Number(selectedParent),
+      studentId: Number(selectedStudent),
+    });
 
-      setMessage("Student linked successfully");
-    } catch (error: any) {
-      setMessage(
-        error.response?.data || "Failed to link student"
-      );
-    }
-  };
+    setMessage("Student linked successfully.");
+
+    setSelectedParent("");
+    setSelectedStudent("");
+  } catch (error: any) {
+    setMessage(
+      error.response?.data || "Failed to link student"
+    );
+  }
+};
 
   return (
     <div style={{ padding: "30px" }}>
