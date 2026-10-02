@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import api from "../api/api";
@@ -75,87 +74,125 @@ export default function Classes() {
   };
 
   return (
-    <div>
-      <h1>Classes</h1>
-
-      <button onClick={() => (window.location.href = "/dashboard")}>
-        Back to Dashboard
-      </button>
-
-      <hr />
-
-      <h2>Add Class</h2>
-
-      <form onSubmit={addClass}>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
         <div>
-          <label>Class Name</label>
-          <br />
-
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Grade 10A"
-            required
-          />
+          <h1>School Administration System</h1>
+          <p>Class management</p>
         </div>
 
-        <br />
-
-        <div>
-          <label>Grade</label>
-          <br />
-
-          <select
-            value={gradeId}
-            onChange={(e) => setGradeId(e.target.value)}
-            required
-          >
-            <option value="">Select a grade</option>
-
-            {grades.map((grade) => (
-              <option key={grade.id} value={grade.id}>
-                {grade.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <br />
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Adding..." : "Add Class"}
+        <button
+          className="logout-button"
+          onClick={() => {
+            window.location.href = "/dashboard";
+          }}
+        >
+          Back to Dashboard
         </button>
-      </form>
+      </header>
 
-      {message && <p>{message}</p>}
+      <main className="dashboard-main">
+        <section className="welcome-section">
+          <h2>Classes</h2>
+          <p>
+            Create school classes and assign each class to a grade.
+          </p>
+        </section>
 
-      <hr />
+        <section className="module-card student-form-card">
+          <div>
+            <h2>Add Class</h2>
+            <p className="form-description">
+              Create a class such as Grade 10A and associate it with
+              its grade.
+            </p>
+          </div>
 
-      <h2>Class List</h2>
+          <form onSubmit={addClass} className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label>Class Name</label>
 
-      {classes.length === 0 ? (
-        <p>No classes found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Class Name</th>
-              <th>Grade</th>
-            </tr>
-          </thead>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Grade 10A"
+                  required
+                />
+              </div>
 
-          <tbody>
-            {classes.map((schoolClass) => (
-              <tr key={schoolClass.id}>
-                <td>{schoolClass.name}</td>
+              <div className="form-field">
+                <label>Grade</label>
 
-                <td>{schoolClass.grade.name}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                <select
+                  value={gradeId}
+                  onChange={(e) => setGradeId(e.target.value)}
+                  required
+                >
+                  <option value="">Select a grade</option>
+
+                  {grades.map((grade) => (
+                    <option key={grade.id} value={grade.id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <button
+              className="module-button form-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Adding Class..." : "Add Class"}
+            </button>
+          </form>
+
+          {message && (
+            <div className="status-message">
+              {message}
+            </div>
+          )}
+        </section>
+
+        <section className="module-card">
+          <div className="section-heading">
+            <h2>Class List</h2>
+            <p>
+              {classes.length} class
+              {classes.length === 1 ? "" : "es"} registered.
+            </p>
+          </div>
+
+          {classes.length === 0 ? (
+            <p>No classes found.</p>
+          ) : (
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Class Name</th>
+                    <th>Grade</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {classes.map((schoolClass) => (
+                    <tr key={schoolClass.id}>
+                      <td>
+                        <strong>{schoolClass.name}</strong>
+                      </td>
+
+                      <td>{schoolClass.grade.name}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
-
