@@ -1,7 +1,5 @@
-
 import { useEffect, useState } from "react";
 import api from "../api/api";
-
 
 export default function Dashboard() {
   const email = localStorage.getItem("email");
@@ -9,21 +7,21 @@ export default function Dashboard() {
   const [studentCount, setStudentCount] = useState(0);
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (!token) {
-    window.location.href = "/";
-    return;
-  }
+    if (!token) {
+      window.location.href = "/";
+      return;
+    }
 
-  api.get("/students")
-    .then((response) => {
-      setStudentCount(response.data.length);
-    })
-    .catch((error) => {
-      console.error("Failed to load students:", error);
-    });
-}, []);
+    api.get("/students")
+      .then((response) => {
+        setStudentCount(response.data.length);
+      })
+      .catch((error) => {
+        console.error("Failed to load students:", error);
+      });
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -33,128 +31,146 @@ export default function Dashboard() {
     window.location.href = "/";
   };
 
+  const navigate = (path: string) => {
+    window.location.href = path;
+  };
+
+  const modules = [
+    {
+      title: "Students",
+      description: "Manage student records, classes and assignments.",
+      path: "/students",
+      action: "Manage Students",
+    },
+    {
+      title: "Teachers",
+      description: "Manage teachers and staff information.",
+      path: "/teachers",
+      action: "Manage Teachers",
+    },
+    {
+      title: "Grades",
+      description: "Manage Grade 8 through Grade 12.",
+      path: "/grades",
+      action: "Manage Grades",
+    },
+    {
+      title: "Classes",
+      description: "Manage classes and their assigned grades.",
+      path: "/classes",
+      action: "Manage Classes",
+    },
+    {
+      title: "Subjects",
+      description: "Manage school subjects and subject codes.",
+      path: "/subjects",
+      action: "Manage Subjects",
+    },
+    {
+      title: "Enrollments",
+      description: "Enroll students in school subjects.",
+      path: "/enrollments",
+      action: "Manage Enrollments",
+    },
+    {
+      title: "Teaching Assignments",
+      description: "Assign teachers to subjects and classes.",
+      path: "/teaching-assignments",
+      action: "Manage Assignments",
+    },
+    {
+      title: "Marks",
+      description: "Manage assessments and student marks.",
+      path: "/marks",
+      action: "Manage Marks",
+    },
+    {
+      title: "Attendance",
+      description: "Record and monitor student attendance.",
+      path: "/attendance",
+      action: "Manage Attendance",
+    },
+    {
+      title: "Parents",
+      description: "Manage parent accounts and student relationships.",
+      path: "/parents",
+      action: "Manage Parents",
+    },
+    {
+      title: "Fees",
+      description: "Manage school fees and payments.",
+      path: "/fees",
+      action: "Manage Fees",
+    },
+  ];
+
   return (
-    <div>
-      <header>
-        <h1>School Administration System</h1>
-
+    <div className="dashboard-page">
+      <header className="dashboard-header">
         <div>
-          <span>{email}</span>
-          <span>{role}</span>
+          <h1>School Administration System</h1>
+          <p>School management dashboard</p>
+        </div>
 
-          <button onClick={logout}>Logout</button>
+        <div className="user-section">
+          <div>
+            <strong>{email}</strong>
+            <span>{role}</span>
+          </div>
+
+          <button className="logout-button" onClick={logout}>
+            Logout
+          </button>
         </div>
       </header>
 
-      <main>
-        <h2>Dashboard</h2>
-        
+      <main className="dashboard-main">
+        <section className="welcome-section">
+          <div>
+            <h2>Dashboard</h2>
+            <p>Manage your school's students, staff and academic records.</p>
+          </div>
+        </section>
 
-        <div>
-        <h3>Students</h3>
-        <p>{studentCount} students registered</p>
-        </div>
-        <button onClick={() => (window.location.href = "/students")}>
-        Manage Students
-        </button>
-
-        <div>
-          <h3>Teachers</h3>
-          <p>Manage teachers and classes.</p>
-        </div>
-        <button onClick={() => (window.location.href = "/teachers")}>
-           Manage Teachers
-        </button>
-
-        <div>
-  <h3>Grades</h3>
-  <p>Manage Grade 8 to Grade 12.</p>
-</div>
-
-<button
-  onClick={() => (window.location.href = "/grades")}
->
-  Manage Grades
-</button>
-
-        
-        <div>
-        <h3>Classes</h3>
-        <p>Manage school classes and grades.</p>
+        <section className="stats-grid">
+          <div className="stat-card">
+            <span className="stat-label">Students</span>
+            <strong className="stat-value">{studentCount}</strong>
+            <span className="stat-description">Registered students</span>
           </div>
 
-          <button onClick={() => (window.location.href = "/classes")}>
-            Manage Classes
-          </button>
+          <div className="stat-card">
+            <span className="stat-label">Role</span>
+            <strong className="stat-value">{role}</strong>
+            <span className="stat-description">Current account</span>
+          </div>
+        </section>
 
-          <div>
-  <h3>Subjects</h3>
-  <p>Manage school subjects.</p>
-</div>
+        <section>
+          <div className="section-heading">
+            <h2>School Management</h2>
+            <p>Access the main areas of the administration system.</p>
+          </div>
 
-<button onClick={() => (window.location.href = "/subjects")}>
-  Manage Subjects
-</button>
+          <div className="module-grid">
+            {modules.map((module) => (
+              <div className="module-card" key={module.path}>
+                <div>
+                  <h3>{module.title}</h3>
+                  <p>{module.description}</p>
+                </div>
 
-<div>
-  <h3>Student Enrollments</h3>
-  <p>Enroll students in school subjects.</p>
-</div>
-
-<button
-  onClick={() => (window.location.href = "/enrollments")}
->
-  Manage Enrollments
-</button>
-
-<div>
-  <h3>Teaching Assignments</h3>
-  <p>Assign teachers to subjects and classes.</p>
-</div>
-
-<button
-  onClick={() => (window.location.href = "/teaching-assignments")}
->
-  Manage Teaching Assignments
-</button>
-
-         <div>
-          <h3>Marks</h3>
-          <p>Manage student marks and assessments.</p>
-        </div>
-        <button onClick={() => (window.location.href = "/marks")}>
-          Manage Marks
-        </button> 
-
-
-
-        <div>
-          <h3>Attendance</h3>
-          <p>Track student attendance.</p>
-        </div>
-        <button onClick={() => (window.location.href = "/attendance")}>
-          Manage Attendance
-        </button>
-
-      
-
-         <div>
-          <h3>Parents</h3>
-          <p>View and manage parent information.</p>
-        </div>
-        <button onClick={() => window.location.href = "/parents"}>
-        Manage Parents
-        </button>
-
-        <div>
-          <h3>Fees</h3>
-          <p>Manage school fees and payments.</p>
-        </div>
-        <button onClick={() => window.location.href = "/fees"}>
-        Manage Fees
-        </button>
+                <button
+                  className="module-button"
+                  onClick={() => navigate(module.path)}
+                >
+                  {module.action}
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );
-} 
-
+}
