@@ -60,79 +60,121 @@ export default function Subjects() {
   };
 
   return (
-    <div>
-      <h1>Subjects</h1>
-
-      <button onClick={() => (window.location.href = "/dashboard")}>
-        Back to Dashboard
-      </button>
-
-      <hr />
-
-      <h2>Add Subject</h2>
-
-      <form onSubmit={addSubject}>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
         <div>
-          <label>Subject Name</label>
-          <br />
-
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Mathematics"
-            required
-          />
+          <h1>School Administration System</h1>
+          <p>Subject management</p>
         </div>
 
-        <br />
-
-        <div>
-          <label>Subject Code</label>
-          <br />
-
-          <input
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="MATH"
-            required
-          />
-        </div>
-
-        <br />
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Adding..." : "Add Subject"}
+        <button
+          className="logout-button"
+          onClick={() => {
+            window.location.href = "/dashboard";
+          }}
+        >
+          Back to Dashboard
         </button>
-      </form>
+      </header>
 
-      {message && <p>{message}</p>}
+      <main className="dashboard-main">
+        <section className="welcome-section">
+          <h2>Subjects</h2>
+          <p>
+            Manage the subjects offered by your school.
+          </p>
+        </section>
 
-      <hr />
+        <section className="module-card student-form-card">
+          <div>
+            <h2>Add Subject</h2>
+            <p className="form-description">
+              Add a subject name and its unique subject code.
+            </p>
+          </div>
 
-      <h2>Subject List</h2>
+          <form onSubmit={addSubject} className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label>Subject Name</label>
 
-      {subjects.length === 0 ? (
-        <p>No subjects found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Subject Name</th>
-              <th>Code</th>
-            </tr>
-          </thead>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Mathematics"
+                  required
+                />
+              </div>
 
-          <tbody>
-            {subjects.map((subject) => (
-              <tr key={subject.id}>
-                <td>{subject.name}</td>
-                <td>{subject.code}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+              <div className="form-field">
+                <label>Subject Code</label>
+
+                <input
+                  value={code}
+                  onChange={(e) =>
+                    setCode(e.target.value.toUpperCase())
+                  }
+                  placeholder="e.g. MATH"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              className="module-button form-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Adding Subject..." : "Add Subject"}
+            </button>
+          </form>
+
+          {message && (
+            <div className="status-message">
+              {message}
+            </div>
+          )}
+        </section>
+
+        <section className="module-card">
+          <div className="section-heading">
+            <h2>Subject List</h2>
+            <p>
+              {subjects.length} subject
+              {subjects.length === 1 ? "" : "s"} registered.
+            </p>
+          </div>
+
+          {subjects.length === 0 ? (
+            <p>No subjects found.</p>
+          ) : (
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Subject Name</th>
+                    <th>Code</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {subjects.map((subject) => (
+                    <tr key={subject.id}>
+                      <td>
+                        <strong>{subject.name}</strong>
+                      </td>
+
+                      <td>{subject.code}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
+
 
