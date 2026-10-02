@@ -58,63 +58,105 @@ export default function Grades() {
   };
 
   return (
-    <div>
-      <h1>Grades</h1>
-
-      <button onClick={() => (window.location.href = "/dashboard")}>
-        Back to Dashboard
-      </button>
-
-      <hr />
-
-      <h2>Add Grade</h2>
-
-      <form onSubmit={addGrade}>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
         <div>
-          <label>Grade Name</label>
-          <br />
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Grade 12"
-            required
-          />
+          <h1>School Administration System</h1>
+          <p>Grade management</p>
         </div>
 
-        <br />
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Adding..." : "Add Grade"}
+        <button
+          className="logout-button"
+          onClick={() => {
+            window.location.href = "/dashboard";
+          }}
+        >
+          Back to Dashboard
         </button>
-      </form>
+      </header>
 
-      {message && <p>{message}</p>}
+      <main className="dashboard-main">
+        <section className="welcome-section">
+          <h2>Grades</h2>
+          <p>
+            Manage the grades used by your school.
+          </p>
+        </section>
 
-      <hr />
+        <section className="module-card student-form-card">
+          <div>
+            <h2>Add Grade</h2>
+            <p className="form-description">
+              Add a school grade such as Grade 8, Grade 9 or Grade 12.
+            </p>
+          </div>
 
-      <h2>Grade List</h2>
+          <form onSubmit={addGrade} className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label>Grade Name</label>
 
-      {grades.length === 0 ? (
-        <p>No grades found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Grade</th>
-            </tr>
-          </thead>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Grade 12"
+                  required
+                />
+              </div>
+            </div>
 
-          <tbody>
-            {grades.map((grade) => (
-              <tr key={grade.id}>
-                <td>{grade.id}</td>
-                <td>{grade.name}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            <button
+              className="module-button form-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Adding Grade..." : "Add Grade"}
+            </button>
+          </form>
+
+          {message && (
+            <div className="status-message">
+              {message}
+            </div>
+          )}
+        </section>
+
+        <section className="module-card">
+          <div className="section-heading">
+            <h2>Grade List</h2>
+            <p>
+              {grades.length} grade
+              {grades.length === 1 ? "" : "s"} registered.
+            </p>
+          </div>
+
+          {grades.length === 0 ? (
+            <p>No grades found.</p>
+          ) : (
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Grade</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {grades.map((grade) => (
+                    <tr key={grade.id}>
+                      <td>{grade.id}</td>
+                      <td>
+                        <strong>{grade.name}</strong>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
