@@ -44,6 +44,7 @@ export default function AttendanceHistory() {
     if (!id) {
       setAttendance([]);
       setSummary(null);
+      setMessage("");
       return;
     }
 
@@ -83,77 +84,169 @@ export default function AttendanceHistory() {
     loadAttendance(id);
   };
 
+  const getStatusLabel = (status: Attendance["status"]) => {
+    if (status === "PRESENT") return "Present";
+    if (status === "ABSENT") return "Absent";
+    return "Late";
+  };
+
   return (
-    <div>
-      <h1>Attendance History</h1>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
+        <div>
+          <h1>Attendance History</h1>
+          <p>View attendance records and attendance summaries.</p>
+        </div>
 
-      <button onClick={() => (window.location.href = "/dashboard")}>
-        Back to Dashboard
-      </button>
+        <button
+          className="logout-button"
+          onClick={() => (window.location.href = "/dashboard")}
+        >
+          Back to Dashboard
+        </button>
+      </header>
 
-      <hr />
+      <main className="dashboard-main">
+        <section className="student-form-card stat-card">
+          <div className="section-heading">
+            <h2>Select Student</h2>
+            <p>
+              Choose a student to view their attendance history.
+            </p>
+          </div>
 
-      <h2>Select Student</h2>
+          <div className="form-field">
+            <label htmlFor="student">Student</label>
 
-      <select
-        value={studentId}
-        onChange={handleStudentChange}
-      >
-        <option value="">Select a student</option>
+            <select
+              id="student"
+              value={studentId}
+              onChange={handleStudentChange}
+            >
+              <option value="">Select a student</option>
 
-        {students.map((student) => (
-          <option key={student.id} value={student.id}>
-            {student.studentNumber} - {student.firstName}{" "}
-            {student.lastName}
-          </option>
-        ))}
-      </select>
+              {students.map((student) => (
+                <option key={student.id} value={student.id}>
+                  {student.studentNumber} - {student.firstName}{" "}
+                  {student.lastName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {message && <p>{message}</p>}
+          {message && (
+            <div className="status-message">
+              {message}
+            </div>
+          )}
+        </section>
 
-      {summary && (
-        <>
-          <hr />
+        {summary && (
+          <section>
+            <div className="section-heading">
+              <h2>Attendance Summary</h2>
+              <p>Overview of the selected student's attendance.</p>
+            </div>
 
-          <h2>Attendance Summary</h2>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <span className="stat-label">Total Records</span>
+                <strong className="stat-value">
+                  {summary.total}
+                </strong>
+                <span className="stat-description">
+                  Attendance records
+                </span>
+              </div>
 
-          <p>Total: {summary.total}</p>
-          <p>Present: {summary.present}</p>
-          <p>Absent: {summary.absent}</p>
-          <p>Late: {summary.late}</p>
+              <div className="stat-card">
+                <span className="stat-label">Present</span>
+                <strong className="stat-value">
+                  {summary.present}
+                </strong>
+                <span className="stat-description">
+                  Days present
+                </span>
+              </div>
 
-          <h3>
-            Attendance Rate:{" "}
-            {summary.attendancePercentage.toFixed(2)}%
-          </h3>
-        </>
-      )}
+              <div className="stat-card">
+                <span className="stat-label">Absent</span>
+                <strong className="stat-value">
+                  {summary.absent}
+                </strong>
+                <span className="stat-description">
+                  Days absent
+                </span>
+              </div>
 
-      <hr />
+              <div className="stat-card">
+                <span className="stat-label">Late</span>
+                <strong className="stat-value">
+                  {summary.late}
+                </strong>
+                <span className="stat-description">
+                  Late arrivals
+                </span>
+              </div>
+            </div>
 
-      <h2>Attendance History</h2>
+            <div className="stat-card">
+              <span className="stat-label">
+                Attendance Rate
+              </span>
 
-      {attendance.length === 0 ? (
-        <p>No attendance records found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+              <strong className="stat-value">
+                {summary.attendancePercentage.toFixed(2)}%
+              </strong>
 
-          <tbody>
-            {attendance.map((record) => (
-              <tr key={record.id}>
-                <td>{record.date}</td>
-                <td>{record.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+              <span className="stat-description">
+                Overall attendance percentage
+              </span>
+            </div>
+          </section>
+        )}
+
+        <section>
+          <div className="section-heading">
+            <h2>Attendance History</h2>
+            <p>
+              Detailed attendance records for the selected student.
+            </p>
+          </div>
+
+          {attendance.length === 0 ? (
+            <div className="stat-card">
+              <p className="form-description">
+                {studentId
+                  ? "No attendance records found."
+                  : "Select a student to view attendance records."}
+              </p>
+            </div>
+          ) : (
+            <div className="stat-card">
+              <div className="table-wrapper">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {attendance.map((record) => (
+                      <tr key={record.id}>
+                        <td>{record.date}</td>
+                        <td>{getStatusLabel(record.status)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

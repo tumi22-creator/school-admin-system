@@ -171,198 +171,266 @@ export default function Marks() {
   };
 
   return (
-    <div>
-      <h1>Marks & Assessments</h1>
-
-      <button onClick={() => (window.location.href = "/dashboard")}>
-        Back to Dashboard
-      </button>
-
-      <hr />
-
-      <h2>Create Assessment</h2>
-
-      <form onSubmit={createAssessment}>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
         <div>
-          <label>Assessment Name</label>
-
-          <input
-            value={assessmentName}
-            onChange={(e) => setAssessmentName(e.target.value)}
-            placeholder="Mathematics Test 1"
-            required
-          />
+          <h1>School Administration System</h1>
+          <p>Marks and assessment management</p>
         </div>
 
-        <div>
-          <label>Subject</label>
-
-          <select
-            value={subjectId}
-            onChange={(e) => setSubjectId(e.target.value)}
-            required
-          >
-            <option value="">Select subject</option>
-
-            {subjects.map((subject) => (
-              <option key={subject.id} value={subject.id}>
-                {subject.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label>Class</label>
-
-          <select
-            value={classId}
-            onChange={(e) => setClassId(e.target.value)}
-            required
-          >
-            <option value="">Select class</option>
-
-            {classes.map((schoolClass) => (
-              <option key={schoolClass.id} value={schoolClass.id}>
-                {schoolClass.name} - {schoolClass.grade}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label>Assessment Type</label>
-
-          <select
-            value={assessmentType}
-            onChange={(e) => setAssessmentType(e.target.value)}
-          >
-            <option value="TEST">Test</option>
-            <option value="ASSIGNMENT">Assignment</option>
-            <option value="EXAM">Exam</option>
-            <option value="PROJECT">Project</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Maximum Mark</label>
-
-          <input
-            type="number"
-            value={maxMark}
-            onChange={(e) => setMaxMark(e.target.value)}
-            min="1"
-            required
-          />
-        </div>
-
-        <div>
-          <label>Date</label>
-
-          <input
-            type="date"
-            value={assessmentDate}
-            onChange={(e) => setAssessmentDate(e.target.value)}
-            required
-          />
-        </div>
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Creating..." : "Create Assessment"}
+        <button
+          className="logout-button"
+          onClick={() => {
+            window.location.href = "/dashboard";
+          }}
+        >
+          Back to Dashboard
         </button>
-      </form>
+      </header>
 
-      <hr />
+      <main className="dashboard-main">
+        <section className="welcome-section">
+          <h2>Marks & Assessments</h2>
+          <p>
+            Create assessments and record student marks.
+          </p>
+        </section>
 
-      <h2>Enter Student Mark</h2>
+        <section className="module-card student-form-card">
+          <div>
+            <h2>Create Assessment</h2>
+            <p className="form-description">
+              Create an assessment for a specific subject and class.
+            </p>
+          </div>
 
-      <form onSubmit={saveMark}>
-        <div>
-          <label>Student</label>
+          <form onSubmit={createAssessment} className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label>Assessment Name</label>
 
-          <select
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            required
-          >
-            <option value="">Select student</option>
+                <input
+                  value={assessmentName}
+                  onChange={(e) =>
+                    setAssessmentName(e.target.value)
+                  }
+                  placeholder="e.g. Mathematics Test 1"
+                  required
+                />
+              </div>
 
-            {students.map((student) => (
-              <option key={student.id} value={student.id}>
-                {student.studentNumber} - {student.firstName}{" "}
-                {student.lastName}
-              </option>
-            ))}
-          </select>
-        </div>
+              <div className="form-field">
+                <label>Subject</label>
 
-        <div>
-          <label>Assessment</label>
+                <select
+                  value={subjectId}
+                  onChange={(e) => setSubjectId(e.target.value)}
+                  required
+                >
+                  <option value="">Select subject</option>
 
-          <select
-            value={assessmentId}
-            onChange={(e) => setAssessmentId(e.target.value)}
-            required
-          >
-            <option value="">Select assessment</option>
+                  {subjects.map((subject) => (
+                    <option key={subject.id} value={subject.id}>
+                      {subject.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {assessments.map((assessment) => (
-              <option key={assessment.id} value={assessment.id}>
-                {assessment.name} ({assessment.maxMark})
-              </option>
-            ))}
-          </select>
-        </div>
+              <div className="form-field">
+                <label>Class</label>
 
-        <div>
-          <label>Mark</label>
+                <select
+                  value={classId}
+                  onChange={(e) => setClassId(e.target.value)}
+                  required
+                >
+                  <option value="">Select class</option>
 
-          <input
-            type="number"
-            value={mark}
-            onChange={(e) => setMark(e.target.value)}
-            min="0"
-            required
-          />
-        </div>
+                  {classes.map((schoolClass) => (
+                    <option key={schoolClass.id} value={schoolClass.id}>
+                      {schoolClass.name} - {schoolClass.grade}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Saving..." : "Save Mark"}
-        </button>
-      </form>
+              <div className="form-field">
+                <label>Assessment Type</label>
 
-      {message && <p>{message}</p>}
+                <select
+                  value={assessmentType}
+                  onChange={(e) =>
+                    setAssessmentType(e.target.value)
+                  }
+                >
+                  <option value="TEST">Test</option>
+                  <option value="ASSIGNMENT">Assignment</option>
+                  <option value="EXAM">Exam</option>
+                  <option value="PROJECT">Project</option>
+                </select>
+              </div>
 
-      <hr />
+              <div className="form-field">
+                <label>Maximum Mark</label>
 
-      <h2>Assessments</h2>
+                <input
+                  type="number"
+                  value={maxMark}
+                  onChange={(e) => setMaxMark(e.target.value)}
+                  min="1"
+                  required
+                />
+              </div>
 
-      {assessments.length === 0 ? (
-        <p>No assessments found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Maximum Mark</th>
-              <th>Date</th>
-            </tr>
-          </thead>
+              <div className="form-field">
+                <label>Date</label>
 
-          <tbody>
-            {assessments.map((assessment) => (
-              <tr key={assessment.id}>
-                <td>{assessment.name}</td>
-                <td>{assessment.type}</td>
-                <td>{assessment.maxMark}</td>
-                <td>{assessment.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                <input
+                  type="date"
+                  value={assessmentDate}
+                  onChange={(e) =>
+                    setAssessmentDate(e.target.value)
+                  }
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              className="module-button form-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Create Assessment"}
+            </button>
+          </form>
+        </section>
+
+        <section className="module-card student-form-card">
+          <div>
+            <h2>Enter Student Mark</h2>
+            <p className="form-description">
+              Select a student and assessment, then enter the mark achieved.
+            </p>
+          </div>
+
+          <form onSubmit={saveMark} className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label>Student</label>
+
+                <select
+                  value={studentId}
+                  onChange={(e) => setStudentId(e.target.value)}
+                  required
+                >
+                  <option value="">Select student</option>
+
+                  {students.map((student) => (
+                    <option key={student.id} value={student.id}>
+                      {student.studentNumber} -{" "}
+                      {student.firstName} {student.lastName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-field">
+                <label>Assessment</label>
+
+                <select
+                  value={assessmentId}
+                  onChange={(e) =>
+                    setAssessmentId(e.target.value)
+                  }
+                  required
+                >
+                  <option value="">Select assessment</option>
+
+                  {assessments.map((assessment) => (
+                    <option
+                      key={assessment.id}
+                      value={assessment.id}
+                    >
+                      {assessment.name} ({assessment.maxMark})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-field">
+                <label>Mark</label>
+
+                <input
+                  type="number"
+                  value={mark}
+                  onChange={(e) => setMark(e.target.value)}
+                  min="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              className="module-button form-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Saving..." : "Save Mark"}
+            </button>
+          </form>
+
+          {message && (
+            <div className="status-message">
+              {message}
+            </div>
+          )}
+        </section>
+
+        <section className="module-card">
+          <div className="section-heading">
+            <h2>Assessments</h2>
+            <p>
+              {assessments.length} assessment
+              {assessments.length === 1 ? "" : "s"} registered.
+            </p>
+          </div>
+
+          {assessments.length === 0 ? (
+            <p>No assessments found.</p>
+          ) : (
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Maximum Mark</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {assessments.map((assessment) => (
+                    <tr key={assessment.id}>
+                      <td>
+                        <strong>{assessment.name}</strong>
+                      </td>
+
+                      <td>{assessment.type}</td>
+
+                      <td>{assessment.maxMark}</td>
+
+                      <td>{assessment.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
-

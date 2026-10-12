@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import api from "../api/api";
 
@@ -35,14 +36,19 @@ function ParentDashboard() {
 
   const loadStudents = async () => {
     try {
-      const response = await api.get(`/parents/${parentId}/students`);
+      const response = await api.get(
+        `/parents/${parentId}/students`
+      );
+
       setStudents(response.data);
 
       if (response.data.length > 0) {
         setSelectedStudent(String(response.data[0].id));
       }
     } catch (err: any) {
-      setError(err.response?.data || "Failed to load students");
+      setError(
+        err.response?.data || "Failed to load students"
+      );
     }
   };
 
@@ -53,152 +59,285 @@ function ParentDashboard() {
   }, [selectedStudent]);
 
   const loadDashboard = async () => {
-  try {
-    const response = await api.get(
-      `/parents/${parentId}/student/${selectedStudent}/dashboard`
-    );
+    try {
+      setError("");
 
-    console.log("PARENT DASHBOARD DATA:", response.data);
+      const response = await api.get(
+        `/parents/${parentId}/student/${selectedStudent}/dashboard`
+      );
 
-    setDashboard(response.data);
-  } catch (err: any) {
-    setError(err.response?.data || "Failed to load dashboard");
-  }
-};
+      setDashboard(response.data);
+    } catch (err: any) {
+      setError(
+        err.response?.data || "Failed to load dashboard"
+      );
+    }
+  };
 
   const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("email");
-  localStorage.removeItem("role");
-  localStorage.removeItem("userId");
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userId");
 
-  window.location.href = "/";
-};
+    window.location.href = "/";
+  };
+
+  const navigate = (path: string) => {
+    window.location.href = path;
+  };
 
   return (
-    <div style={{ padding: "30px" }}>
-      <h1>Parent Dashboard</h1>
-
-      <button onClick={logout}>
-        Logout
-      </button>
-
-      {error && (
-        <p style={{ color: "red" }}>
-          {error}
-        </p>
-      )}
-
-      <label>Select Student</label>
-
-      <br />
-
-      <select
-        value={selectedStudent}
-        onChange={(e) => setSelectedStudent(e.target.value)}
-      >
-        <option value="">Select student</option>
-
-        {students.map((student) => (
-          <option key={student.id} value={student.id}>
-            {student.firstName} {student.lastName} (
-            {student.studentNumber})
-          </option>
-        ))}
-      </select>
-
-      {dashboard && (
-        <div style={{ marginTop: "30px" }}>
-          <h2>
-            {dashboard.student.firstName}{" "}
-            {dashboard.student.lastName}
-          </h2>
-
-          <p>
-            Student Number: {dashboard.student.studentNumber}
-          </p>
-
-          <hr />
-
-          <h3>Attendance</h3>
-
-          <p>
-            Attendance:{" "}
-            {dashboard.attendance?.attendancePercentage ?? 0}%
-          </p>
-
-          <p>
-            Present: {dashboard.attendance?.present ?? 0}
-          </p>
-
-          <p>
-            Absent: {dashboard.attendance?.absent ?? 0}
-          </p>
-
-          <p>
-            Late: {dashboard.attendance?.late ?? 0}
-          </p>
-
-          <hr />
-
-          <h3>Academic Performance</h3>
-
-          <p>
-            Average Mark: {dashboard.averageMark ?? 0}%
-          </p>
-
-          <hr />
-
-          <h3>Fees</h3>
-
-          <hr />
-
-<h3>Student Information</h3>
-
-<button
-  onClick={() =>
-    window.location.href = `/marks?studentId=${selectedStudent}`
-  }
->
-  View Marks
-</button>
-
-<button
-  onClick={() =>
-    window.location.href = `/fees?studentId=${selectedStudent}`
-  }
-  style={{ marginLeft: "10px" }}
->
-  View Fees
-</button>
-
-<button
-  onClick={() =>
-    (window.location.href = `/parent-marks?studentId=${selectedStudent}`)
-  }
->
-  View Marks
-</button>
-
-<button
-  onClick={() =>
-    (window.location.href = `/parent-fees?studentId=${selectedStudent}`)
-  }
->
-  View Fees
-</button>
-
-
-          <p>
-            Outstanding Balance: R
-            {dashboard.outstandingBalance ?? 0}
-          </p>
-
-          
+    <div className="dashboard-page">
+      <header className="dashboard-header">
+        <div>
+          <h1>Parent Dashboard</h1>
+          <p>Monitor your child's academic and school information.</p>
         </div>
-      )}
+
+        <div className="user-section">
+          <div>
+            <strong>{localStorage.getItem("email")}</strong>
+            <span>Parent</span>
+          </div>
+
+          <button
+            className="logout-button"
+            onClick={logout}
+          >
+            Logout
+          </button>
+        </div>
+      </header>
+
+      <main className="dashboard-main">
+        {error && (
+          <div className="status-message">
+            {error}
+          </div>
+        )}
+
+        <section className="student-form-card stat-card">
+          <div className="section-heading">
+            <h2>Select Student</h2>
+            <p>
+              Choose which student you want to view.
+            </p>
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="student">
+              Student
+            </label>
+
+            <select
+              id="student"
+              value={selectedStudent}
+              onChange={(e) =>
+                setSelectedStudent(e.target.value)
+              }
+            >
+              <option value="">
+                Select student
+              </option>
+
+              {students.map((student) => (
+                <option
+                  key={student.id}
+                  value={student.id}
+                >
+                  {student.firstName} {student.lastName} (
+                  {student.studentNumber})
+                </option>
+              ))}
+            </select>
+          </div>
+        </section>
+
+        {dashboard && (
+          <>
+            <section className="welcome-section">
+              <h2>
+                {dashboard.student.firstName}{" "}
+                {dashboard.student.lastName}
+              </h2>
+
+              <p>
+                Student Number:{" "}
+                {dashboard.student.studentNumber}
+              </p>
+            </section>
+
+            <section>
+              <div className="section-heading">
+                <h2>Attendance</h2>
+                <p>
+                  Attendance overview for the selected student.
+                </p>
+              </div>
+
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Attendance Rate
+                  </span>
+
+                  <strong className="stat-value">
+                    {(
+                      dashboard.attendance
+                        ?.attendancePercentage ?? 0
+                    ).toFixed(2)}
+                    %
+                  </strong>
+
+                  <span className="stat-description">
+                    Overall attendance
+                  </span>
+                </div>
+
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Present
+                  </span>
+
+                  <strong className="stat-value">
+                    {dashboard.attendance?.present ?? 0}
+                  </strong>
+
+                  <span className="stat-description">
+                    Days present
+                  </span>
+                </div>
+
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Absent
+                  </span>
+
+                  <strong className="stat-value">
+                    {dashboard.attendance?.absent ?? 0}
+                  </strong>
+
+                  <span className="stat-description">
+                    Days absent
+                  </span>
+                </div>
+
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Late
+                  </span>
+
+                  <strong className="stat-value">
+                    {dashboard.attendance?.late ?? 0}
+                  </strong>
+
+                  <span className="stat-description">
+                    Late arrivals
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <div className="section-heading">
+                <h2>Academic & Financial Overview</h2>
+                <p>
+                  Quick overview of marks and outstanding fees.
+                </p>
+              </div>
+
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Average Mark
+                  </span>
+
+                  <strong className="stat-value">
+                    {dashboard.averageMark ?? 0}%
+                  </strong>
+
+                  <span className="stat-description">
+                    Current academic average
+                  </span>
+                </div>
+
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Outstanding Balance
+                  </span>
+
+                  <strong className="stat-value">
+                    R
+                    {(dashboard.outstandingBalance ?? 0).toFixed(
+                      2
+                    )}
+                  </strong>
+
+                  <span className="stat-description">
+                    Fees still outstanding
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <div className="section-heading">
+                <h2>Student Information</h2>
+                <p>
+                  Access detailed academic and financial records.
+                </p>
+              </div>
+
+              <div className="module-grid">
+                <div className="module-card">
+                  <div>
+                    <h3>Marks</h3>
+                    <p>
+                      View the student's assessments and academic
+                      performance.
+                    </p>
+                  </div>
+
+                  <button
+                    className="module-button"
+                    onClick={() =>
+                      navigate(
+                        `/parent-marks?studentId=${selectedStudent}`
+                      )
+                    }
+                  >
+                    View Marks
+                  </button>
+                </div>
+
+                <div className="module-card">
+                  <div>
+                    <h3>Fees</h3>
+                    <p>
+                      View fees, payments and outstanding balances.
+                    </p>
+                  </div>
+
+                  <button
+                    className="module-button"
+                    onClick={() =>
+                      navigate(
+                        `/parent-fees?studentId=${selectedStudent}`
+                      )
+                    }
+                  >
+                    View Fees
+                  </button>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
+      </main>
     </div>
   );
 }
 
 export default ParentDashboard;
+

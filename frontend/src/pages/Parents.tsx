@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import api from "../api/api";
 
@@ -27,18 +28,18 @@ function Parents() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-  loadParents();
-  loadStudents();
-}, []);
+    loadParents();
+    loadStudents();
+  }, []);
 
-const loadParents = async () => {
-  try {
-    const response = await api.get("/parents");
-    setParents(response.data);
-  } catch (error) {
-    setMessage("Failed to load parents");
-  }
-};
+  const loadParents = async () => {
+    try {
+      const response = await api.get("/parents");
+      setParents(response.data);
+    } catch (error) {
+      setMessage("Failed to load parents");
+    }
+  };
 
   const loadStudents = async () => {
     try {
@@ -50,6 +51,11 @@ const loadParents = async () => {
   };
 
   const createParent = async () => {
+    if (!email || !password) {
+      setMessage("Enter the parent email and password.");
+      return;
+    }
+
     try {
       const response = await api.post("/parents", {
         email,
@@ -61,7 +67,7 @@ const loadParents = async () => {
       setEmail("");
       setPassword("");
 
-      setMessage("Parent created successfully");
+      setMessage("Parent created successfully.");
     } catch (error: any) {
       setMessage(
         error.response?.data || "Failed to create parent"
@@ -70,116 +76,209 @@ const loadParents = async () => {
   };
 
   const linkStudent = async () => {
-  if (!selectedParent || !selectedStudent) {
-    setMessage("Select both a parent and a student");
-    return;
-  }
+    if (!selectedParent || !selectedStudent) {
+      setMessage("Select both a parent and a student.");
+      return;
+    }
 
-  try {
-    await api.post("/parent-students", {
-      parentId: Number(selectedParent),
-      studentId: Number(selectedStudent),
-    });
+    try {
+      await api.post("/parent-students", {
+        parentId: Number(selectedParent),
+        studentId: Number(selectedStudent),
+      });
 
-    setMessage("Student linked successfully.");
+      setMessage("Student linked successfully.");
 
-    setSelectedParent("");
-    setSelectedStudent("");
-  } catch (error: any) {
-    setMessage(
-      error.response?.data || "Failed to link student"
-    );
-  }
-};
+      setSelectedParent("");
+      setSelectedStudent("");
+    } catch (error: any) {
+      setMessage(
+        error.response?.data || "Failed to link student"
+      );
+    }
+  };
 
   return (
-    <div style={{ padding: "30px" }}>
-      <h1>Parent Management</h1>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
+        <div>
+          <h1>Parent Management</h1>
+          <p>Create parent accounts and link students to them.</p>
+        </div>
 
-      {message && (
-        <p style={{ color: "green" }}>
-          {message}
-        </p>
-      )}
+        <button
+          className="logout-button"
+          onClick={() => (window.location.href = "/dashboard")}
+        >
+          Back to Dashboard
+        </button>
+      </header>
 
-      <hr />
+      <main className="dashboard-main">
+        {message && (
+          <div className="status-message">
+            {message}
+          </div>
+        )}
 
-      <h2>Create Parent</h2>
+        <section className="student-form-card stat-card">
+          <div className="section-heading">
+            <h2>Create Parent</h2>
+            <p>
+              Create a parent account that can access the parent portal.
+            </p>
+          </div>
 
-      <input
-        type="email"
-        placeholder="Parent email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+          <div className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label htmlFor="parent-email">
+                  Parent Email
+                </label>
 
-      <br />
-      <br />
+                <input
+                  id="parent-email"
+                  type="email"
+                  placeholder="parent@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
 
-      <input
-        type="password"
-        placeholder="Parent password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+              <div className="form-field">
+                <label htmlFor="parent-password">
+                  Password
+                </label>
 
-      <br />
-      <br />
+                <input
+                  id="parent-password"
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
 
-      <button onClick={createParent}>
-        Create Parent
-      </button>
+            <button
+              className="module-button form-submit"
+              onClick={createParent}
+            >
+              Create Parent
+            </button>
+          </div>
+        </section>
 
-      <hr />
+        <section className="student-form-card stat-card">
+          <div className="section-heading">
+            <h2>Link Parent to Student</h2>
+            <p>
+              Connect a parent account to a student's school record.
+            </p>
+          </div>
 
-      <h2>Link Parent to Student</h2>
+          <div className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label htmlFor="parent-select">
+                  Parent
+                </label>
 
-      <label>Parent</label>
+                <select
+                  id="parent-select"
+                  value={selectedParent}
+                  onChange={(e) =>
+                    setSelectedParent(e.target.value)
+                  }
+                >
+                  <option value="">Select parent</option>
 
-      <br />
+                  {parents.map((parent) => (
+                    <option key={parent.id} value={parent.id}>
+                      {parent.email}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-      <select
-        value={selectedParent}
-        onChange={(e) => setSelectedParent(e.target.value)}
-      >
-        <option value="">Select parent</option>
+              <div className="form-field">
+                <label htmlFor="student-select">
+                  Student
+                </label>
 
-        {parents.map((parent) => (
-          <option key={parent.id} value={parent.id}>
-            {parent.email}
-          </option>
-        ))}
-      </select>
+                <select
+                  id="student-select"
+                  value={selectedStudent}
+                  onChange={(e) =>
+                    setSelectedStudent(e.target.value)
+                  }
+                >
+                  <option value="">Select student</option>
 
-      <br />
-      <br />
+                  {students.map((student) => (
+                    <option
+                      key={student.id}
+                      value={student.id}
+                    >
+                      {student.firstName} {student.lastName} (
+                      {student.studentNumber})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-      <label>Student</label>
+            <button
+              className="module-button form-submit"
+              onClick={linkStudent}
+            >
+              Link Student
+            </button>
+          </div>
+        </section>
 
-      <br />
+        <section>
+          <div className="section-heading">
+            <h2>Parent Accounts</h2>
+            <p>Parent accounts currently registered in the system.</p>
+          </div>
 
-      <select
-        value={selectedStudent}
-        onChange={(e) => setSelectedStudent(e.target.value)}
-      >
-        <option value="">Select student</option>
+          <div className="stat-card">
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                  </tr>
+                </thead>
 
-        {students.map((student) => (
-          <option key={student.id} value={student.id}>
-            {student.firstName} {student.lastName} (
-            {student.studentNumber})
-          </option>
-        ))}
-      </select>
-
-      <br />
-      <br />
-
-      <button onClick={linkStudent}>
-        Link Student
-      </button>
+                <tbody>
+                  {parents.length === 0 ? (
+                    <tr>
+                      <td colSpan={3}>
+                        No parent accounts found.
+                      </td>
+                    </tr>
+                  ) : (
+                    parents.map((parent) => (
+                      <tr key={parent.id}>
+                        <td>{parent.id}</td>
+                        <td>{parent.email}</td>
+                        <td>{parent.role}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
 
 export default Parents;
+

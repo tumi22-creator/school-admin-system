@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import api from "../api/api";
 
@@ -136,165 +137,326 @@ function Fees() {
   };
 
   return (
-    <div style={{ padding: "30px" }}>
-      <h1>Fees Management</h1>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
+        <div>
+          <h1>Fees Management</h1>
+          <p>Manage student fees, payments and outstanding balances.</p>
+        </div>
 
-      {message && <p>{message}</p>}
+        <button
+          className="logout-button"
+          onClick={() => (window.location.href = "/dashboard")}
+        >
+          Back to Dashboard
+        </button>
+      </header>
 
-      <label>Student</label>
+      <main className="dashboard-main">
+        {message && (
+          <div className="status-message">
+            {message}
+          </div>
+        )}
 
-      <br />
+        <section className="student-form-card stat-card">
+          <div className="section-heading">
+            <h2>Select Student</h2>
+            <p>
+              Choose a student before managing their fees or payments.
+            </p>
+          </div>
 
-      <select
-        value={studentId}
-        onChange={(e) => setStudentId(e.target.value)}
-      >
-        <option value="">Select student</option>
+          <div className="assignment-controls">
+            <select
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+            >
+              <option value="">Select student</option>
 
-        {students.map((student) => (
-          <option key={student.id} value={student.id}>
-            {student.firstName} {student.lastName} (
-            {student.studentNumber})
-          </option>
-        ))}
-      </select>
+              {students.map((student) => (
+                <option key={student.id} value={student.id}>
+                  {student.firstName} {student.lastName} (
+                  {student.studentNumber})
+                </option>
+              ))}
+            </select>
 
-      <button
-        onClick={loadFees}
-        style={{ marginLeft: "10px" }}
-      >
-        Load Fees
-      </button>
+            <button
+              className="table-button primary"
+              onClick={loadFees}
+            >
+              Load Fees
+            </button>
+          </div>
+        </section>
 
-      <hr />
+        <section className="student-form-card stat-card">
+          <div className="section-heading">
+            <h2>Add Fee</h2>
+            <p>Assign a new fee to the selected student.</p>
+          </div>
 
-      <h2>Add Fee</h2>
+          <div className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label htmlFor="fee-type">Fee Type</label>
 
-      <select
-        value={feeType}
-        onChange={(e) => setFeeType(e.target.value)}
-      >
-        <option value="TUITION">Tuition</option>
-        <option value="REGISTRATION">Registration</option>
-        <option value="TRANSPORT">Transport</option>
-        <option value="UNIFORM">Uniform</option>
-        <option value="EXAM">Exam</option>
-        <option value="OTHER">Other</option>
-      </select>
+                <select
+                  id="fee-type"
+                  value={feeType}
+                  onChange={(e) => setFeeType(e.target.value)}
+                >
+                  <option value="TUITION">Tuition</option>
+                  <option value="REGISTRATION">Registration</option>
+                  <option value="TRANSPORT">Transport</option>
+                  <option value="UNIFORM">Uniform</option>
+                  <option value="EXAM">Exam</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
 
-      <br />
-      <br />
+              <div className="form-field">
+                <label htmlFor="fee-amount">Amount</label>
 
-      <input
-        type="number"
-        placeholder="Amount"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
+                <input
+                  id="fee-amount"
+                  type="number"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </div>
 
-      <br />
-      <br />
+              <div className="form-field">
+                <label htmlFor="fee-description">
+                  Description
+                </label>
 
-      <input
-        type="text"
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+                <input
+                  id="fee-description"
+                  type="text"
+                  placeholder="Fee description"
+                  value={description}
+                  onChange={(e) =>
+                    setDescription(e.target.value)
+                  }
+                />
+              </div>
 
-      <br />
-      <br />
+              <div className="form-field">
+                <label htmlFor="fee-year">Year</label>
 
-      <input
-        type="number"
-        placeholder="Year"
-        value={year}
-        onChange={(e) => setYear(e.target.value)}
-      />
-
-      <br />
-      <br />
-
-      <button onClick={addFee}>
-        Add Fee
-      </button>
-
-      <hr />
-
-      <h2>Record Payment</h2>
-
-      <input
-        type="number"
-        placeholder="Payment amount"
-        value={paymentAmount}
-        onChange={(e) => setPaymentAmount(e.target.value)}
-      />
-
-      <br />
-      <br />
-
-      <input
-        type="text"
-        placeholder="Payment reference"
-        value={paymentReference}
-        onChange={(e) => setPaymentReference(e.target.value)}
-      />
-
-      <br />
-      <br />
-
-      <input
-        type="text"
-        placeholder="Description"
-        value={paymentDescription}
-        onChange={(e) => setPaymentDescription(e.target.value)}
-      />
-
-      <br />
-      <br />
-
-      <button onClick={recordPayment}>
-        Record Payment
-      </button>
-
-      {summary && (
-        <>
-          <hr />
-
-          <h2>Fee Summary</h2>
-
-          <p>
-            Total Fees: R{summary.totalFees}
-          </p>
-
-          <p>
-            Total Paid: R{summary.totalPaid}
-          </p>
-
-          <p>
-            Outstanding: R{summary.outstandingBalance}
-          </p>
-
-          <h3>Fees</h3>
-
-          {summary.fees.map((fee) => (
-            <div key={fee.id}>
-              {fee.feeType} — R{fee.amount} — {fee.description}
+                <input
+                  id="fee-year"
+                  type="number"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                />
+              </div>
             </div>
-          ))}
 
-          <h3>Payments</h3>
+            <button
+              className="module-button form-submit"
+              onClick={addFee}
+            >
+              Add Fee
+            </button>
+          </div>
+        </section>
 
-          {summary.payments.map((payment) => (
-            <div key={payment.id}>
-              R{payment.amount} — {payment.reference} —{" "}
-              {payment.paymentDate}
+        <section className="student-form-card stat-card">
+          <div className="section-heading">
+            <h2>Record Payment</h2>
+            <p>Record a payment made by the selected student.</p>
+          </div>
+
+          <div className="student-form">
+            <div className="form-grid">
+              <div className="form-field">
+                <label htmlFor="payment-amount">
+                  Payment Amount
+                </label>
+
+                <input
+                  id="payment-amount"
+                  type="number"
+                  placeholder="0.00"
+                  value={paymentAmount}
+                  onChange={(e) =>
+                    setPaymentAmount(e.target.value)
+                  }
+                />
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="payment-reference">
+                  Payment Reference
+                </label>
+
+                <input
+                  id="payment-reference"
+                  type="text"
+                  placeholder="e.g. PAY-001"
+                  value={paymentReference}
+                  onChange={(e) =>
+                    setPaymentReference(e.target.value)
+                  }
+                />
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="payment-description">
+                  Description
+                </label>
+
+                <input
+                  id="payment-description"
+                  type="text"
+                  placeholder="Payment description"
+                  value={paymentDescription}
+                  onChange={(e) =>
+                    setPaymentDescription(e.target.value)
+                  }
+                />
+              </div>
             </div>
-          ))}
-        </>
-      )}
+
+            <button
+              className="module-button form-submit"
+              onClick={recordPayment}
+            >
+              Record Payment
+            </button>
+          </div>
+        </section>
+
+        {summary && (
+          <section>
+            <div className="section-heading">
+              <h2>Fee Summary</h2>
+              <p>
+                Financial overview for the selected student.
+              </p>
+            </div>
+
+            <div className="stats-grid">
+              <div className="stat-card">
+                <span className="stat-label">Total Fees</span>
+                <strong className="stat-value">
+                  R{summary.totalFees.toFixed(2)}
+                </strong>
+                <span className="stat-description">
+                  Total fees charged
+                </span>
+              </div>
+
+              <div className="stat-card">
+                <span className="stat-label">Total Paid</span>
+                <strong className="stat-value">
+                  R{summary.totalPaid.toFixed(2)}
+                </strong>
+                <span className="stat-description">
+                  Total payments received
+                </span>
+              </div>
+
+              <div className="stat-card">
+                <span className="stat-label">
+                  Outstanding Balance
+                </span>
+                <strong className="stat-value">
+                  R{summary.outstandingBalance.toFixed(2)}
+                </strong>
+                <span className="stat-description">
+                  Amount still outstanding
+                </span>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="section-heading">
+                <h2>Fees</h2>
+                <p>Fees assigned to this student.</p>
+              </div>
+
+              <div className="table-wrapper">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Amount</th>
+                      <th>Description</th>
+                      <th>Year</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {summary.fees.length === 0 ? (
+                      <tr>
+                        <td colSpan={4}>
+                          No fees found.
+                        </td>
+                      </tr>
+                    ) : (
+                      summary.fees.map((fee) => (
+                        <tr key={fee.id}>
+                          <td>{fee.feeType}</td>
+                          <td>R{fee.amount.toFixed(2)}</td>
+                          <td>{fee.description || "-"}</td>
+                          <td>{fee.year}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="stat-card" style={{ marginTop: "20px" }}>
+              <div className="section-heading">
+                <h2>Payments</h2>
+                <p>Payments recorded for this student.</p>
+              </div>
+
+              <div className="table-wrapper">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Amount</th>
+                      <th>Reference</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {summary.payments.length === 0 ? (
+                      <tr>
+                        <td colSpan={4}>
+                          No payments found.
+                        </td>
+                      </tr>
+                    ) : (
+                      summary.payments.map((payment) => (
+                        <tr key={payment.id}>
+                          <td>{payment.paymentDate}</td>
+                          <td>R{payment.amount.toFixed(2)}</td>
+                          <td>{payment.reference || "-"}</td>
+                          <td>{payment.description || "-"}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 }
 
 export default Fees;
+

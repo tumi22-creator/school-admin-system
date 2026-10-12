@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import api from "../api/api";
 
@@ -46,6 +47,8 @@ function ParentFees() {
 
   const loadFees = async () => {
     try {
+      setError("");
+
       const response = await api.get(
         `/parents/${parentId}/student/${studentId}/fees`
       );
@@ -53,88 +56,187 @@ function ParentFees() {
       setSummary(response.data);
     } catch (err: any) {
       setError(
-        err.response?.data || "Failed to load fee information"
+        err.response?.data ||
+          "Failed to load fee information"
       );
     }
   };
 
   return (
-    <div style={{ padding: "30px" }}>
-      <h1>Student Fees</h1>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
+        <div>
+          <h1>Student Fees</h1>
+          <p>View fees, payments and outstanding balances.</p>
+        </div>
 
-      {error && (
-        <p style={{ color: "red" }}>
-          {error}
-        </p>
-      )}
+        <button
+          className="logout-button"
+          onClick={() => (window.location.href = "/dashboard")}
+        >
+          Back to Dashboard
+        </button>
+      </header>
 
-      {summary && (
-        <>
-          <h2>Fee Summary</h2>
+      <main className="dashboard-main">
+        {error && (
+          <div className="status-message">
+            {error}
+          </div>
+        )}
 
-          <p>
-            Total Fees: R{summary.totalFees}
-          </p>
-
-          <p>
-            Total Paid: R{summary.totalPaid}
-          </p>
-
-          <p>
-            Outstanding Balance: R{summary.outstandingBalance}
-          </p>
-
-          <hr />
-
-          <h2>Fees</h2>
-
-          {summary.fees.length === 0 ? (
-            <p>No fees recorded.</p>
-          ) : (
-            summary.fees.map((fee) => (
-              <div key={fee.id}>
-                <strong>{fee.feeType}</strong>
-                {" — "}
-                R{fee.amount}
-                {" — "}
-                {fee.description}
-                {" — "}
-                {fee.year}
+        {summary && (
+          <>
+            <section>
+              <div className="section-heading">
+                <h2>Fee Summary</h2>
+                <p>
+                  Financial overview for the selected student.
+                </p>
               </div>
-            ))
-          )}
 
-          <hr />
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Total Fees
+                  </span>
 
-          <h2>Payments</h2>
+                  <strong className="stat-value">
+                    R{summary.totalFees.toFixed(2)}
+                  </strong>
 
-          {summary.payments.length === 0 ? (
-            <p>No payments recorded.</p>
-          ) : (
-            summary.payments.map((payment) => (
-              <div key={payment.id}>
-                R{payment.amount}
-                {" — "}
-                {payment.reference}
-                {" — "}
-                {payment.paymentDate}
+                  <span className="stat-description">
+                    Total fees charged
+                  </span>
+                </div>
+
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Total Paid
+                  </span>
+
+                  <strong className="stat-value">
+                    R{summary.totalPaid.toFixed(2)}
+                  </strong>
+
+                  <span className="stat-description">
+                    Payments received
+                  </span>
+                </div>
+
+                <div className="stat-card">
+                  <span className="stat-label">
+                    Outstanding Balance
+                  </span>
+
+                  <strong className="stat-value">
+                    R{summary.outstandingBalance.toFixed(2)}
+                  </strong>
+
+                  <span className="stat-description">
+                    Amount still outstanding
+                  </span>
+                </div>
               </div>
-            ))
-          )}
+            </section>
 
-          <br />
+            <section>
+              <div className="section-heading">
+                <h2>Fees</h2>
+                <p>
+                  Fees currently recorded for the student.
+                </p>
+              </div>
 
-          <button
-            onClick={() =>
-              (window.location.href = "/dashboard")
-            }
-          >
-            Back to Dashboard
-          </button>
-        </>
-      )}
+              <div className="stat-card">
+                {summary.fees.length === 0 ? (
+                  <p className="form-description">
+                    No fees recorded.
+                  </p>
+                ) : (
+                  <div className="table-wrapper">
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>Type</th>
+                          <th>Amount</th>
+                          <th>Description</th>
+                          <th>Year</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {summary.fees.map((fee) => (
+                          <tr key={fee.id}>
+                            <td>{fee.feeType}</td>
+                            <td>
+                              R{fee.amount.toFixed(2)}
+                            </td>
+                            <td>
+                              {fee.description || "-"}
+                            </td>
+                            <td>{fee.year}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <section>
+              <div className="section-heading">
+                <h2>Payments</h2>
+                <p>
+                  Payments recorded for the student.
+                </p>
+              </div>
+
+              <div className="stat-card">
+                {summary.payments.length === 0 ? (
+                  <p className="form-description">
+                    No payments recorded.
+                  </p>
+                ) : (
+                  <div className="table-wrapper">
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Amount</th>
+                          <th>Reference</th>
+                          <th>Description</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {summary.payments.map((payment) => (
+                          <tr key={payment.id}>
+                            <td>{payment.paymentDate}</td>
+                            <td>
+                              R{payment.amount.toFixed(2)}
+                            </td>
+                            <td>
+                              {payment.reference || "-"}
+                            </td>
+                            <td>
+                              {payment.description || "-"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
+          </>
+        )}
+      </main>
     </div>
   );
 }
 
 export default ParentFees;
+
